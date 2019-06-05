@@ -79,7 +79,6 @@ function hasCheckArgs(str,Args,obj){
   while(idx > -1){
     for(let i=0;i<obj.sq.length;i++){
       if(obj.sq[i] > idx){
-        console.log(Args,idx,i)
         if(i/2 === 1){
           
           return true;
@@ -89,7 +88,6 @@ function hasCheckArgs(str,Args,obj){
     }
     for(let j=0;j<obj.dq.length;j++){
       if(obj.dq[j] > idx){
-        console.log(Args,idx,j)
         if(j/2 === 1){
           return true;
           
@@ -98,7 +96,6 @@ function hasCheckArgs(str,Args,obj){
     }
     idx = str.indexOf(Args,idx + 1);
   }
-  console.log(Args,idx)
   return false;
   
 }
