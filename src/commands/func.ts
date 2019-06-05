@@ -37,15 +37,20 @@ export default async (args: string[]) => {
             const isFile = stats.isFile(); // 是否为文件
             const isDir = stats.isDirectory(); // 是否为文件夹
             if (isFile) {
-              let type = getType(filepath)
-              if(type && type === 'js'){
+              let type = path.extname(filepath);
+              if(type && type === '.js'){
                 let data = fs.readFileSync(filepath,'utf-8');
-                  for(let i=0;i<CheckArgs.length;++i){
-                    if(data.indexOf(CheckArgs[i]) != -1){
-                      console.error('err  ','文件 '+filepath+' 包含'+CheckArgs[i]);
+                let obj = getSignPos(data);
+                let n = 0;
+                // fs.writeFileSync('C:/Users/admin/Desktop/tooltest/file2/test.js',data,'utf-8');
+                  while(n<CheckArgs.length){
+                    
+                    if(hasCheckArgs(data,CheckArgs[n],obj)){
+                      console.error('err  ','文件 '+filepath+' 包含'+CheckArgs[n]);
                       hasErr = true;
                       return;
                     }
+                    n++;
                   }
               }
             }
@@ -65,110 +70,54 @@ export default async (args: string[]) => {
 }
 
 
-
-/**
- * 文件遍历方法 异步
- * @param filePath 需要遍历的文件路径
- */
- async function fileDisplay(filePath: string) {
-
-  let isFirst:boolean = true;
-  let rootFileLen:number;
-  let rootFiles;
-  let rootIndex;
-  function ergodicFile(filePath: string){
-     // 根据文件路径读取文件，返回一个文件列表
-    fs.readdir(filePath, (err, files) => {
-      if (err) {
-        console.warn(err);
-        return;
-      }
-      // 遍历读取到的文件列表
-      files.forEach((filename,index) => {
-        // path.join得到当前文件的绝对路径
-        const filepath = path.join(filePath, filename);
-        // 根据文件路径获取文件信息
-        fs.stat(filepath, (error, stats) => {
-          if (error) {
-            console.warn('获取文件stats失败');
-            return;
-          }
-          const isFile = stats.isFile(); // 是否为文件
-          const isDir = stats.isDirectory(); // 是否为文件夹
-          if (isFile) {
-            let type = getType(filepath)
-            if(type && type === 'js'){
-                fs.readFile(filepath,'utf-8',(err,data)=>{
-                  if(err){
-                    console.log(err);
-                    return;
-                  }
-                  for(let i=0;i<CheckArgs.length;++i){
-                    if(data.indexOf(CheckArgs[i]) != -1){
-                      console.log('err  ','文件 '+filepath+' 包含'+CheckArgs[i]);
-                    }
-                  }
-                  
-                })
-            }
-          }
-          if (isDir) {
-            ergodicFile(filepath); // 递归，如果是文件夹，就继续遍历该文件夹里面的文件；
-          }
-        });
-      });
-    });
+function hasCheckArgs(str,Args,obj){
+  let idx = str.indexOf(Args);
+  
+  if(idx === -1){
+    return false;
   }
-  ergodicFile(filePath);
-}
-
-
-
-
-
-function getType(file){
-  var filename=file;
-  var index1=filename.lastIndexOf(".");
-  var index2=filename.length;
-  var type=filename.substring(index1+1,index2);
-  return type;
-}
-
-
-// 读取文件的逻辑拉出
-function fsReadDir(dir: string) {
-  return new Promise<string[]>((resolve, reject) => {
-    fs.readdir(dir, (err, files) => {
-      if (err) reject(err);
-      resolve(files);
-    });
-  });
-}
-// 获取fs.stats的逻辑拉出
-function fsStat(path: string) {
-  return new Promise<fs.Stats>((resolve, reject) => {
-    fs.stat(path, (err, stat) => {
-      if (err) reject(err);
-      resolve(stat);
-    });
-  });
-}
-// 搜索文件主方法
-async function fileSearch(dirPath: string) {
-  const files = await fsReadDir(dirPath);
-  const promises = files.map(file => {
-    return fsStat(path.join(dirPath, file));
-  });
-  const datas = await Promise.all(promises).then(stats => {
-    for (let i = 0; i < files.length; i += 1) files[i] = path.join(dirPath, files[i]);
-    return { stats, files };
-  });
-  datas.stats.forEach(stat => {
-    const isFile = stat.isFile();
-    const isDir = stat.isDirectory();
-    if (isDir) {
-      fileSearch(datas.files[datas.stats.indexOf(stat)]);
+  while(idx > -1){
+    for(let i=0;i<obj.sq.length;i++){
+      if(obj.sq[i] > idx){
+        console.log(Args,idx,i)
+        if(i/2 === 1){
+          
+          return true;
+          
+        }
+      }
     }
-    if (isFile) console.log(datas.files[datas.stats.indexOf(stat)]);
-  });
+    for(let j=0;j<obj.dq.length;j++){
+      if(obj.dq[j] > idx){
+        console.log(Args,idx,j)
+        if(j/2 === 1){
+          return true;
+          
+        }
+      }
+    }
+    idx = str.indexOf(Args,idx + 1);
+  }
+  console.log(Args,idx)
+  return false;
+  
 }
+
+function getSignPos(str){
+  let obj={
+    sq:[],
+    dq:[]
+  }
+  for(var i=0;i<str.length;++i){
+    if(str[i] === "'"){
+      obj.sq.push(i);
+    }
+    if(str[i] === '"'){
+      obj.dq.push(i);
+    }
+  }
+  return obj;
+}
+
+
+
