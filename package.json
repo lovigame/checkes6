@@ -1,6 +1,6 @@
 {
-  "name": "checkes6",
-  "version": "1.0.2",
+  "name": "@gswl/checkes6",
+  "version": "1.0.7",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.3",
+    "@types/node-fetch": "^2.5.7",
     "chai": "^4.2.0",
     "mocha": "^6.0.2",
     "nyc": "^13.3.0",
@@ -32,8 +33,9 @@
     "isbinaryfile": "^4.0.0",
     "lodash": "^4.17.11",
     "log4js": "^4.1.0",
-    "prompts": "^2.0.4",
+    "node-fetch": "^2.6.1",
     "ora": "^3.4.0",
+    "prompts": "^2.0.4",
     "recursive-copy": "^2.0.10",
     "rimraf": "^2.6.3",
     "through2": "^3.0.1"
