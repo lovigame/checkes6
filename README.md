@@ -1,5 +1,5 @@
 # checkes6
-
+检查文件是否包含es6语法
 ## 安装
     npm i -g @gswl/checkes6
 

@@ -57,6 +57,63 @@ interface SchemaObj{
   name:string;
   dynamic:DynamicObj[];
 }
+function checkExp(s:any) {
+  var a:any[]=[];
+  var l=s.length;
+  var k=0;
+  var flag=1;
+  for(var i=0;i<l&&flag;i++){
+      switch (s[i]){
+          case '(':
+              a[k]=i;
+              k++;
+              break;
+          case ')':
+              var j=a[k-1];
+              if(s[j]==='('){
+                  a[k]=0;
+                  k--;
+              }else {
+                  flag=0;
+              }
+              break;
+          case '{':
+              a[k]=i;
+              k++;
+              break;
+          case '}':
+              var j=a[k-1];
+              if(s[j]==='{'){
+                  a[k]=0;
+                  k--;
+              }else {
+                  flag=0;
+              }
+              break;
+          case '[':
+              a[k]=i;
+              k++;
+              break;
+          case ']':
+              var j=a[k-1];
+              if(s[j]==='['){
+                  a[k]=0;
+                  k--;
+              }else {
+                  flag=0;
+              }
+              break;
+      }
+  }
+  if(k!==0){
+      flag=0;
+  }
+  if(flag===0){
+      return false;
+  }else {
+      return true;
+  }
+}
 
 function checkSchemaObj(obj:SchemaObj,parentKey:string){
   let newArgs = CheckArgs.slice();
@@ -67,6 +124,9 @@ function checkSchemaObj(obj:SchemaObj,parentKey:string){
   }
   
   obj.dynamic && obj.dynamic.forEach(d=>{
+    if(!checkExp(d.expression)){
+      console.log("exp!!!:"+parentKey+"."+obj.name+"."+d.key,d.expression);
+    }
     if(stringHasInvalidArgs(d.expression,newArgs)){
       console.log(parentKey+"."+obj.name+"."+d.key,d.expression);
     }
